@@ -1,0 +1,120 @@
+:root {
+    /* Colors */
+    --clr-primary: hsl(185, 95%, 45%);
+    --clr-secondary: hsl(185, 96%, 81%);
+    --clr-accent: hsl(185, 95%, 41%);
+    --clr-text: hsl(185, 96%, 9%);
+    --clr-surface: hsl(185, 94%, 93%);
+
+    /* Lengths */
+    --smallest: 0.5rem;
+    --small: 1.5rem;
+    --normal: 2rem;
+    --medium: 3rem;
+    --large: 5rem;
+    --largest: 8rem;
+
+    /* Font family */
+    --ff-default: 'Source Code Pro', monospace;
+
+    /* Font size */
+    --fs-smallest: 0.8rem;
+    --fs-small: 0.9rem;
+    --fs-default: 1rem;
+    --fs-normal: 1.05rem;
+    --fs-medium: 1.1rem;
+    --fs-large: 1.2rem;
+    --fs-xl: 1.3rem;
+    --fs-2xl: 1.4rem;
+    --fs-3xl: 1.5rem;
+    --fs-4xl: 1.6rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* Colors */
+        --clr-primary: hsl(185, 95%, 45%);
+        --clr-secondary: hsl(185, 96%, 19%);
+        --clr-accent: hsl(185, 95%, 41%);
+        --clr-text: hsl(185, 94%, 93%);
+        --clr-surface: hsl(185, 96%, 9%);
+    }
+}
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    font-family: var(--ff-default);
+    font-size: var(--fs-default);
+    color: var(--clr-text);
+}
+
+body {
+    background-color: var(--clr-surface);
+}
+
+ul {
+    list-style-type: none;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    gap: var(--small);
+    align-items: center;
+    padding: var(--small);
+}
+
+.fill-screen {
+    min-height: 50vh;
+    width: 100%;
+}
+
+.justify-end {
+    justify-content: flex-end;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.bg-primary {
+    background-color: var(--clr-primary);
+}
+
+.bg-accent {
+    background-color: var(--clr-accent);
+}
+
+.bg-secondary {
+    background-color: var(--clr-secondary);
+}
+
+.btn {
+    padding: var(--small) var(--normal);
+    border-radius: var(--smallest);
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    transition: transform 200ms ease-in-out;
+}
+
+.btn:disabled {
+    filter: grayscale(100%);
+    opacity: 0.5;
+    cursor: default;
+}
+
+.btn:hover:enabled, .btn:focus {
+    transform: translateY(-5px);
+}
+
+.btn:focus-visible {
+    outline: solid 2px var(--clr-primary);
+    outline-offset: var(--smallest);
+}
+
+#timer {
+    font-size: var(--fs-4xl);
+}

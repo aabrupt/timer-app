@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Timer app</title>
+        <!-- Google fonts prepare -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <!-- Fonts -->
+        <link
+            href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="/assets/style.css" />
+        <!-- HTMX -->
+        <script
+            src="https://unpkg.com/htmx.org@1.9.6"
+            integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni"
+            crossorigin="anonymous"
+        ></script>
+        <!-- Hyperscript -->
+        <script src="https://unpkg.com/hyperscript.org@0.9.11"></script>
+        <!-- Javascript source -->
+        <script>
+            function getTime(currentTime) {
+                return new Date().getTime();
+            }
+            function formatTime(totalTime) {
+                const hours = Math.floor(totalTime / 3600000);
+                const minutes = Math.floor((totalTime % 3600000) / 60000);
+                const seconds = Math.floor((totalTime % 60000) / 1000);
+                const ms = totalTime % 1000;
+
+                return `${hours.toString().padStart(2, "0")}:${minutes
+                    .toString()
+                    .padStart(2, "0")}:${seconds
+                    .toString()
+                    .padStart(2, "0")}.${ms.toString().padStart(3, "0")}`;
+            }
+        </script>
+    </head>
+    <body>
+        <noscript style="color: red"
+            >Warning. Your browser does not seem to have javascript enabled. The
+            site won't work as expected.</noscript
+        >
+        <div class="container flex-col justify-end fill-screen">
+            <time
+                id="timer"
+                _="on timerStart
+                js
+                    if (this.currentTime == undefined) this.currentTime = 0
+                    return getTime() - this.currentTime
+                end then 
+                set startTime to it then 
+                repeat until event timerStop 
+                wait 10ms then 
+                js(startTime)
+                    if (this.currentTime == undefined) return formatTime(0)
+                    this.currentTime = getTime() - startTime
+                    return formatTime(this.currentTime)
+                end then
+                put it into me
+            end
+            on timerClear
+                js
+                    this.currentTime = undefined
+                end
+                call formatTime(0) then
+                put it into me
+            end
+            on load
+                call formatTime(0) then
+                put it into me
+            end"
+                hx-post="/lap"
+                hx-trigger="Lap"
+                hx-target="#laps"
+                hx-swap="beforeend"
+                hx-vals="js:{time: this.currentTime}"
+            >
+            </time>
+            <div class="container">
+                <button
+                    class="btn bg-accent"
+                    _="on click 
+                    send timerStart to #timer
+                end 
+                on timerStop from #timer 
+                    remove @disabled from me
+                end
+                on timerStart from #timer
+                    add @disabled to me
+                end"
+                >
+                    Start
+                </button>
+                <button
+                    class="btn bg-accent"
+                    disabled
+                    _="on click 
+                    send timerStop to #timer then
+                end 
+                on load
+                    add @disabled to me
+                end
+                on timerStart from #timer 
+                    remove @disabled from me
+                end
+                on timerStop from #timer
+                    add @disabled to me
+                end"
+                >
+                    Stop
+                </button>
+                <button
+                    class="btn bg-secondary"
+                    disabled
+                    _="on click
+                    send timerStop to #timer then
+                    send timerClear to [#timer, #laps] then
+                    add @disabled to me
+                end
+                on load
+                    add @disabled to me
+                end
+                on timerStart from #timer
+                    remove @disabled from me
+                end"
+                >
+                    Clear
+                </button>
+                <button
+                    class="btn bg-secondary"
+                    disabled
+                    _="on click
+                    send Lap to #timer
+                end
+                on load
+                    add @disabled to me
+                end
+                on timerStart from #timer
+                    remove @disabled from me
+                end
+                on timerClear from #timer
+                    add @disabled to me
+                end"
+                >
+                    Lap
+                </button>
+            </div>
+        </div>
+        <ul
+            class="container flex-col"
+            id="laps"
+            _="on timerClear put `` into me"
+        ></ul>
+    </body>
+</html>
